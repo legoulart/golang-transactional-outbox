@@ -1,21 +1,29 @@
 package mongodb
 
-import "github.com/legoulart/poc-go/internal/domain/model"
+import (
+	"context"
+	"github.com/legoulart/poc-go/internal/domain"
+	"go.mongodb.org/mongo-driver/mongo"
+)
 
 type MongoDbAdapter struct {
 	repository MongoDbRepository
+	session    mongo.Session
 }
 
-func NewMongoDbAdapter(repository MongoDbRepository) MongoDbAdapter {
-	return MongoDbAdapter{
-		repository: repository,
+func NewMongoDbAdapter(repository MongoDbRepository, session mongo.Session) MongoDbAdapter {
+	return MongoDbAdapter{repository: repository, session: session}
+}
+
+func (a MongoDbAdapter) Save(subscription domain.Subscription) {
+	saveExecute := func(sessCtx mongo.SessionContext) (interface{}, error) {
+		a.repository.save(subscription)
+		a.repository.saveEvent(domain.EventFromSubscription(subscription))
+		return nil, nil
 	}
-}
 
-func (a MongoDbAdapter) Save(user model.User) {
-	panic("TODO")
-}
-
-func (a MongoDbAdapter) SaveEvent(event model.Event) {
-	panic("TODO")
+	_, err := a.session.WithTransaction(context.TODO(), saveExecute)
+	if err != nil {
+		panic("TODO")
+	}
 }

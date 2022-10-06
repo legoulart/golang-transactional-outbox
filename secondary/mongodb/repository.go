@@ -1,27 +1,47 @@
 package mongodb
 
 import (
+	"context"
 	"encoding/json"
-	"github.com/legoulart/poc-go/internal/domain/model"
+	"github.com/legoulart/poc-go/internal/domain"
+
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
 type MongoDbRepository struct {
-	context          mongo.SessionContext
-	modelCollection  mongo.Collection
-	outboxCollection mongo.Collection
+	modelCollection  *mongo.Collection
+	outboxCollection *mongo.Collection
 }
 
-func NewMongoDbRepository() MongoDbRepository {
-	return MongoDbRepository{}
+func NewMongoDbRepository(modelCollection *mongo.Collection, outboxCollection *mongo.Collection) MongoDbRepository {
+	return MongoDbRepository{
+		modelCollection:  modelCollection,
+		outboxCollection: outboxCollection,
+	}
 }
 
-func (r MongoDbRepository) save(user model.User) {
-	model, _ := json.Marshal(user)
-	r.modelCollection.InsertOne(r.context, model)
+func (r MongoDbRepository) save(user domain.Subscription) {
+	model, err := json.Marshal(user)
+
+	if err != nil {
+		panic("TODO")
+	}
+
+	_, err = r.modelCollection.InsertOne(context.TODO(), model)
+	if err != nil {
+		panic("TODO")
+	}
 }
 
-func (r MongoDbRepository) saveEvent(event model.Event) {
-	model, _ := json.Marshal(event)
-	r.modelCollection.InsertOne(r.context, model)
+func (r MongoDbRepository) saveEvent(event domain.Event) {
+	model, err := json.Marshal(event)
+
+	if err != nil {
+		panic("TODO")
+	}
+
+	_, err = r.modelCollection.InsertOne(context.TODO(), model)
+	if err != nil {
+		panic("TODO")
+	}
 }

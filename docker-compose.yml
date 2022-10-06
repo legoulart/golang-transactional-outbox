@@ -3,11 +3,11 @@ version: "3.9"
 services:
   mongo.db:
     container_name: mongo_split
-    image: mongo:3.4
+    image: mongo:6.0
     command: mongod --maxConns 10000
     volumes:
       - mongo:/data/db
-      - ./config/storages/mongo/migrations/init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+#      - ./config/storages/mongo/migrations/init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
     ports:
       - "27017:27017"
 

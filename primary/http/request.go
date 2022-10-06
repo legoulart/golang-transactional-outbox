@@ -1,6 +1,5 @@
-package request
+package http
 
 type Request struct {
-	Name  string
 	Email string
 }
